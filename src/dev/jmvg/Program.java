@@ -1,6 +1,8 @@
 package dev.jmvg;
 
 import dev.jmvg.db.DBConnection;
+import dev.jmvg.model.Order;
+import dev.jmvg.model.OrderStatus;
 import dev.jmvg.model.Product;
 
 import java.sql.Connection;
@@ -14,12 +16,13 @@ public class Program {
         Connection conn = DBConnection.getConnection();
         Statement st = conn.createStatement();
 
-        ResultSet rs = st.executeQuery("SELECT  * FROM tb_product");
+        ResultSet rs = st.executeQuery("SELECT  * FROM tb_order");
 
         while (rs.next()){
 
 
-            System.out.println(instantiateProduct(rs));
+
+            System.out.println(instantiateOrder(rs));
 
         }
 
@@ -36,5 +39,17 @@ public class Program {
         p.setPrice(rs.getDouble("price"));
 
         return p;
+    }
+
+    private static Order instantiateOrder(ResultSet rs) throws SQLException{
+        Order order = new Order();
+
+        order.setId(rs.getLong("id"));
+        order.setLatitude(rs.getDouble("latitude"));
+        order.setLongitude(rs.getDouble("longitude"));
+        order.setMoment(rs.getTimestamp("moment").toInstant());
+        order.setStatus(OrderStatus.values()[rs.getInt("status")]);
+
+        return order;
     }
 }
